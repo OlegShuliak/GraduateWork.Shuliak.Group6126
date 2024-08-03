@@ -1,0 +1,115 @@
+version: '3'
+services:
+  mosquitto:
+    image: eclipse-mosquitto
+    network_mode: bridge
+    user: 1000:1000
+    ports:
+      - "1883:1883"
+    volumes:
+      - "/home/shuliak/mosquitto/config:/mosquitto/config"
+      - "/home/shuliak/mosquitto/data:/mosquitto/data"
+      - "/home/shuliak/mosquitto/log:/mosquitto/log"
+    environment:
+      - TZ=Europe/Minsk
+    restart: unless-stopped
+
+  telegraf:
+    image: telegraf:alpine
+    network_mode: bridge
+    user: 1000:1000
+    volumes:
+      - "/home/shuliak/telegraf/conf:/etc/telegraf/telegraf.d"
+    ports:
+      - "8092:8092/tcp"
+      - "8092:8092/udp"
+      - "8094:8094/tcp"
+      - "8094:8094/udp"
+      - "8125:8125/tcp"
+      - "8125:8125/udp"
+    environment:
+      - TZ=Europe/Minsk
+    depends_on:
+      - mosquitto
+      - influxdb
+    restart: unless-stopped
+
+  influxdb:
+    image: influxdb:alpine
+    network_mode: bridge
+    user: 1000:1000
+    ports:
+      - "8086:8086"
+    volumes:
+      - "/home/shuliak/influxdb/data:/var/lib/influxdb2"
+      - "/home/shuliak/influxdb/conf:/etc/influxdb"
+      - "/home/shuliak/influxdb/engine:/var/lib/influxdb2/engine"
+    environment:
+      - TZ=Europe/Minsk
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana
+    network_mode: bridge
+    user: 1000:1000
+    volumes:
+      - "/home/shuliak/grafana/data:/var/lib/grafana"
+      - "/home/shuliak/grafana/conf:/etc/grafana"
+      - "/home/shuliak/grafana/log:/var/log/grafana"
+    ports:
+      - "3000:3000"
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Minsk
+    restart: unless-stopped
+
+  nodered:
+    image: nodered/node-red:latest-minimal
+    network_mode: bridge
+    user: 1000:1000
+    volumes:
+      - "/home/shuliak/node-red/data:/data"
+    ports:
+      - "1880:1880"
+    environment:
+      - TZ=Europe/Minsk
+    restart: unless-stopped
+
+  nginx:
+    image: nginx:mainline-alpine-slim
+    network_mode: bridge
+    volumes:
+      - "/home/shuliak/nginx/conf:/etc/nginx/conf.d"
+      - "/home/shuliak/nginx/html:/usr/share/nginx/html"
+      - "/home/shuliak/certbot/conf:/etc/letsencrypt"
+      - "/home/shuliak/certbot/www:/var/www/certbot"
+    environment:
+      - TZ=Europe/Minsk
+    ports:
+      - "80:80"
+      - "443:443"
+    command: '/bin/sh -c ''while :; do sleep 24h & wait $${!}; nginx -s reload; done & nginx -g "daemon off;"'''
+    restart: unless-stopped
+
+  certbot:
+    image: certbot/certbot:latest
+    network_mode: bridge
+    volumes:
+      - "/home/shuliak/certbot/conf:/etc/letsencrypt"
+      - "/home/shuliak/certbot/www:/var/www/certbot"
+    environment:
+      - TZ=Europe/Moscow
+    depends_on:
+      - nginx
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 24h & wait $${!}; done;'"
+    restart: unless-stopped
+
+  inadyn:
+    image: troglobit/inadyn:latest
+    restart: unless-stopped
+    network_mode: bridge
+    volumes:
+      - "/home/shuliak/inadyn/inadyn.conf:/etc/inadyn.conf"
+    environment:
+      - TZ=Europe/Moscow

@@ -1,0 +1,46 @@
+---- Debian:
+
+Логин - shuliak
+Пароль - shuliak
+IP - 192.168.100.86
+
+
+--- Хост на домене gb-study-shuliak.ru:
+Логин - gbstudys
+Пароль - j;7s@NT1T6i2Pf
+IP - 194.62.19.226 (10.10.10.212)
+
+---- Mosquitto:
+
+Логин - IoT
+Пароль - shuliak
+
+---- Node-Red:
+
+Логин Admin - shuliak
+Пароль Admin- shuliakoleg 
+
+Логин User - user
+Пароль User - shuliakuser
+
+Фраза для шифрования credentials file - shuliakadmin
+
+---- InfluxDB:
+
+Логин - shuliak
+Пароль - shuliakoleg
+Токен - epm5oVc2nJPXZclOhDgN8FX7gGFxDUSeQq_6X_0YlXxyXZC26vO7M7BAa-1cT3tTBa19NwvfORfGeme6dnf6Cw==
+
+---- Grafana:
+
+Логин - shuliak
+Пароль - shuliakoleg
+
+---- Порт:
+mosquitto_port=1883
+influxdb_port=8086
+grafana_port=3000
+nodered_port=1880
+telegraf_port1=8092
+telegraf_port2=8094
+telegraf_port3=8125
