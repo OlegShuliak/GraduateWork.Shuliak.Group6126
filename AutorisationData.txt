@@ -2,13 +2,7 @@
 
 Логин - shuliak
 Пароль - shuliak
-IP - 192.168.100.86
-
-
---- Хост на домене gb-study-shuliak.ru:
-Логин - gbstudys
-Пароль - j;7s@NT1T6i2Pf
-IP - 194.62.19.226 (10.10.10.212)
+IP - 192.168.100.87
 
 ---- Mosquitto:
 
